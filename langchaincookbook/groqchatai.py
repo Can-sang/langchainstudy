@@ -25,6 +25,7 @@ def chatai():
     )
 
     """
+        1.    
         普通调用LLM
         将消息体写死
     """
@@ -40,6 +41,7 @@ def chatai():
     # print(ai_msg.content)
 
     """
+        2.
         链式调用LLM
         模板定义对话结构
     """
@@ -64,6 +66,7 @@ def chatai():
         }
     )
     """
+        3.
         | 用途       | 内容                                                    |
         | -------- | ----------------------------------------------------- |
         | **输出内容** | `content`，直接拿来展示 / 使用                                 |
@@ -71,8 +74,27 @@ def chatai():
         | **消耗情况** | `response_metadata['token_usage']`，帮你看消耗多少 Token / 速度 |
         | **模型信息** | `model_name`，确认是哪个 LLM                                |
     """
-    print(ai_msg.content)
+    # print(ai_msg.content)
+    """
+        4.
+        流式输出streaming
+    """
+    # 1. 发起流式请求
+    stream = llm.stream([
+        ("system","..."),
+        ("human", "I want to know how I can make money by studying computers, and make money with high cost performance")
+    ])
 
+    # 2. 实时打印
+    for chunk in stream:
+        print(chunk.text(), end="")
+
+    # 3. 或者拼成完整结果供后续使用
+    stream = llm.stream(messages)
+    full = next(stream)
+    for chunk in stream:
+        full += chunk
+    print("\n完整翻译：", full.content)
 
 
 if __name__ == "__main__":
